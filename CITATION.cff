@@ -3,7 +3,7 @@ title: JCGEImportData.jl - Canonical IO/SAM schema and import utilities for JCGE
 message: >-
   v0.1.0 - Initial public release.
 type: software
-doi: ''
+doi: 10.5281/zenodo.18274911
 authors:
   - given-names: Riccardo
     family-names: Boero
@@ -12,7 +12,7 @@ authors:
     affiliation: NILU
 identifiers:
   - type: doi
-    value: ''
+    value: 10.5281/zenodo.18274911
     description: This DOI represents all software versions.
 repository-code: 'https://github.com/equicirco/JCGEImportData.jl'
 url: 'https://equicirco.github.io/JCGEImportData.jl/'

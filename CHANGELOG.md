@@ -10,10 +10,10 @@ Removed: For features removed in this release.
 Fixed: For any bug fixes.
 Security: For vulnerabilities.
 
-## [0.1.0] - unreleased
+## [0.1.0] - 2026-01-16
 ### Added
 - Project layout and package boundaries.
-- Initial block-based modeling interfaces and RunSpec structure.
-- Calibration and output utilities with canonical data schema.
-- Example models and integration tests.
+- Data import helpers for JCGE input datasets.
+- CSV/DataFrames-based ingestion and validation pipeline.
+- Integration points with JCGECore and JCGECalibrate.
 - Documentation scaffolding and package docs.
