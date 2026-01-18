@@ -15,7 +15,7 @@ A Computable General Equilibrium (CGE) model is a quantitative economic model th
 ## What is this package?
 Import utilities that extract data from external sources (e.g., GTAP, Eurostat)
 
-and emit canonical JCGE CSV datasets for model calibration.
+and emit canonical [JCGE](https://jcge.org) CSV datasets for model calibration.
 
 Scope:
 - ETL from external datasets into the canonical schema.
@@ -102,7 +102,7 @@ The adapter stubs live in `packages/JCGEImportData/src/Adapters.jl`.
 
 ## How to cite
 
-If you use the JCGE framework, please cite:
+If you use the [JCGE](https://jcge.org) framework, please cite:
 
 Boero, R. *JCGE - Julia Computable General Equilibrium Framework* [software], 2026.
 DOI: 10.5281/zenodo.18282436
