@@ -10,7 +10,7 @@
 A Computable General Equilibrium (CGE) model is a quantitative economic model that represents an economy as interconnected markets for goods and services, factors of production, institutions, and the rest of the world. It is calibrated with data (typically a Social Accounting Matrix) and solved numerically as a system of nonlinear equations until equilibrium conditions (zero-profit, market-clearing, and income-balance) hold within tolerance.
 
 ## What is JCGE?
-JCGE is a block-based CGE modeling and execution framework in Julia. It defines a shared RunSpec structure and reusable blocks so models can be assembled, validated, solved, and compared consistently across packages.
+[JCGE](https://jcge.org) is a block-based CGE modeling and execution framework in Julia. It defines a shared RunSpec structure and reusable blocks so models can be assembled, validated, solved, and compared consistently across packages.
 
 ## What is this package?
 Import utilities that extract data from external sources (e.g., GTAP, Eurostat)
@@ -99,3 +99,40 @@ The adapter stubs live in `packages/JCGEImportData/src/Adapters.jl`.
 - If `factor_income` is not provided, all factor income is assigned to the
   first institution as a default placeholder. Provide `factor_income` to
   override this behavior.
+
+## How to cite
+
+If you use the JCGE framework, please cite:
+
+Boero, R. *JCGE - Julia Computable General Equilibrium Framework* [software], 2026.
+DOI: 10.5281/zenodo.18282436
+URL: https://JCGE.org
+
+```bibtex
+@software{boero_jcge_2026,
+  title  = {JCGE - Julia Computable General Equilibrium Framework},
+  author = {Boero, Riccardo},
+  year   = {2026},
+  doi    = {10.5281/zenodo.18282436},
+  url    = {https://JCGE.org}
+}
+```
+
+If you use this package, please cite:
+
+Boero, R. *JCGEImportData.jl - Canonical IO/SAM schema and import utilities for JCGE.jl.* [software], 2026.
+DOI: 10.5281/zenodo.18274911
+URL: https://ImportData.JCGE.org
+SourceCode: https://github.com/equicirco/JCGEImportData.jl
+
+```bibtex
+@software{boero_jcgeimportdata_2026,
+  title  = {JCGEImportData.jl - Canonical IO/SAM schema and import utilities for JCGE.jl.},
+  author = {Boero, Riccardo},
+  year   = {2026},
+  doi    = {10.5281/zenodo.18274911},
+  url    = {https://ImportData.JCGE.org}
+}
+```
+
+If you use a specific tagged release, please cite the version DOI assigned on Zenodo for that release (preferred for exact reproducibility).

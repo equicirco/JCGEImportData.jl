@@ -15,7 +15,7 @@ identifiers:
     value: 10.5281/zenodo.18274911
     description: This DOI represents all software versions.
 repository-code: 'https://github.com/equicirco/JCGEImportData.jl'
-url: 'https://equicirco.github.io/JCGEImportData.jl/'
+url: 'https://ImportData.JCGE.org/'
 abstract: >-
   JCGEImportData.jl defines a canonical IO/SAM schema and helpers to normalize external data sources for calibration.
 keywords:
