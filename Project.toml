@@ -1,6 +1,6 @@
 name = "JCGEImportData"
 uuid = "8e499509-ec2a-45f1-ac19-e18611106d56"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Riccardo Boero <ribo@nilu.no>"]
 
 [deps]

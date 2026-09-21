@@ -23,6 +23,42 @@ write_canonical_dataset("data", bundle)
 
 `check_sam_balance` and `check_io_balance` provide consistency diagnostics.
 
+## Prepare data for JCGECalibrate
+
+`write_canonical_dataset` writes the canonical `sam.csv` and `sets.csv` files
+read by `JCGECalibrate`. The preparation sequence is deliberately explicit:
+
+1. Download and normalize the chosen source accounts with JCGEImportData.
+2. In the model project, record and apply source-to-model classifications,
+   aggregation, valuation treatment, institutional and external-account
+   treatment, and the chosen balancing method.
+3. Build an `IOBundle` containing the intended goods, activities, factors,
+   institutions, tax accounts, external accounts, intermediate use, supply,
+   value added, and final demand. Add tax, trade, and factor-income tables when
+   they are part of the intended SAM.
+4. Check the IO and resulting SAM balances, resolve any imbalance deliberately,
+   then write the canonical files.
+5. Add optional `params.csv`, `subsets.csv`, `labels.csv`, and `mappings.csv`
+   only when they are needed by the model specification.
+
+```julia
+using JCGEImportData
+using JCGECalibrate
+
+check_io_balance(bundle)
+sam_table = sam_from_io(bundle)
+check_sam_balance(sam_table)
+write_canonical_dataset("data/calibration", bundle; sam = sam_table)
+
+sets = load_canonical_sets("data/calibration")
+sam = load_canonical_sam("data/calibration"; goods = bundle.goods, factors = bundle.factors)
+```
+
+The source import functions deliberately do not perform steps 2--4: mapping
+published accounts to a SAM and choosing its closure are model decisions. Pass
+an explicitly prepared parameter table as `params = ...` when the model needs
+`params.csv`.
+
 ## Read Eurostat FIGARO supply-use tables
 
 `EurostatAdapter` reads local flat FIGARO supply and use tables into a
