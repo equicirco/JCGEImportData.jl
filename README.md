@@ -26,44 +26,6 @@ pipeline from source tables to a Social Accounting Matrix. Sector and regional
 aggregation, trade and institutional treatment, balancing choices, and SAM
 closure are model-specific decisions.
 
-## Preparing a calibration dataset for JCGECalibrate
-
-`write_canonical_dataset` writes the canonical `sam.csv` and `sets.csv` files
-read directly by [JCGECalibrate](https://jcge.org). A reproducible preparation
-workflow is:
-
-1. Download and normalize the selected source SUT, IO, satellite, or national-
-   accounts tables with this package.
-2. In the model project, document and apply the required classification mapping,
-   aggregation, valuation treatment, institutional and external-account
-   treatment, and balancing method.
-3. Assemble an `IOBundle` with the model's goods, activities, factors,
-   institutions, tax accounts, external accounts, intermediate use, supply,
-   value added, and final demand. Add explicit tax, trade, and factor-income
-   tables where the intended SAM requires them.
-4. Run `check_io_balance` and `check_sam_balance`, resolve material imbalance
-   deliberately, then write the canonical files.
-5. Add optional `params.csv`, `subsets.csv`, `labels.csv`, or `mappings.csv`
-   only when the model needs them, then load the result through JCGECalibrate.
-
-```julia
-using JCGEImportData
-using JCGECalibrate
-
-check_io_balance(bundle)
-sam_table = sam_from_io(bundle)
-check_sam_balance(sam_table)
-write_canonical_dataset("data/calibration", bundle; sam = sam_table)
-
-sets = load_canonical_sets("data/calibration")
-sam = load_canonical_sam("data/calibration"; goods = bundle.goods, factors = bundle.factors)
-```
-
-The importers intentionally stop before steps 2--4: source-to-SAM mappings and
-closure assumptions cannot be made safely without a model-specific decision.
-Pass an explicitly prepared parameter table as `params = ...` when the model
-requires `params.csv`.
-
 ## Minimal IO bundle
 
 JCGEImportData standardizes a minimal IO bundle that can be produced by
