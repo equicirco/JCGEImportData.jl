@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Usage · JCGEImportData</title><meta name="title" content="Usage · JCGEImportData"/><meta property="og:title" content="Usage · JCGEImportData"/><meta property="twitter:title" content="Usage · JCGEImportData"/><meta name="description" content="Documentation for JCGEImportData."/><meta property="og:description" content="Documentation for JCGEImportData."/><meta property="twitter:description" content="Documentation for JCGEImportData."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="../assets/logo.css" rel="stylesheet" type="text/css"/><link href="../assets/deepwiki-chat.css" rel="stylesheet" type="text/css"/><script src="../assets/deepwiki-chat.js"></script><script src="../assets/logo-theme.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">JCGEImportData</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Usage</a><ul class="internal"><li><a class="tocitem" href="#Build-a-bundle"><span>Build a bundle</span></a></li><li><a class="tocitem" href="#Write-CSVs"><span>Write CSVs</span></a></li><li><a class="tocitem" href="#Checks"><span>Checks</span></a></li><li><a class="tocitem" href="#Prepare-data-for-JCGECalibrate"><span>Prepare data for JCGECalibrate</span></a></li><li><a class="tocitem" href="#Read-a-direct-industry-by-industry-IO-table"><span>Read a direct industry-by-industry IO table</span></a></li><li><a class="tocitem" href="#Transform-an-SUT-with-Model-D"><span>Transform an SUT with Model D</span></a></li><li><a class="tocitem" href="#BEA-Make-and-Use-tables"><span>BEA Make and Use tables</span></a></li><li><a class="tocitem" href="#Eurostat-national-SUTs"><span>Eurostat national SUTs</span></a></li><li><a class="tocitem" href="#Eurostat-FIGARO"><span>Eurostat FIGARO</span></a></li><li><a class="tocitem" href="#OECD-ICIO"><span>OECD ICIO</span></a></li><li><a class="tocitem" href="#Scope-boundary"><span>Scope boundary</span></a></li></ul></li><li><a class="tocitem" href="../api/">API</a></li><li><a class="tocitem" href="../citation/">Citation</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Usage</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Usage</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/equicirco/JCGEImportData.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/equicirco/JCGEImportData.jl/blob/main/docs/src/usage.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Usage"><a class="docs-heading-anchor" href="#Usage">Usage</a><a id="Usage-1"></a><a class="docs-heading-anchor-permalink" href="#Usage" title="Permalink"></a></h1><p><code>JCGEImportData</code> converts selected source accounts into normalized SUT, IO, satellite, and canonical SAM inputs.</p><h2 id="Build-a-bundle"><a class="docs-heading-anchor" href="#Build-a-bundle">Build a bundle</a><a id="Build-a-bundle-1"></a><a class="docs-heading-anchor-permalink" href="#Build-a-bundle" title="Permalink"></a></h2><pre><code class="language-julia hljs">using JCGEImportData
+
+bundle = IOBundle(
+    goods=..., activities=..., factors=..., institutions=...,
+    use=..., supply=..., value_added=..., final_demand=...
+)</code></pre><h2 id="Write-CSVs"><a class="docs-heading-anchor" href="#Write-CSVs">Write CSVs</a><a id="Write-CSVs-1"></a><a class="docs-heading-anchor-permalink" href="#Write-CSVs" title="Permalink"></a></h2><pre><code class="language-julia hljs">write_canonical_dataset(&quot;data&quot;, bundle)</code></pre><h2 id="Checks"><a class="docs-heading-anchor" href="#Checks">Checks</a><a id="Checks-1"></a><a class="docs-heading-anchor-permalink" href="#Checks" title="Permalink"></a></h2><p><code>check_sam_balance</code> and <code>check_io_balance</code> provide consistency diagnostics.</p><h2 id="Prepare-data-for-JCGECalibrate"><a class="docs-heading-anchor" href="#Prepare-data-for-JCGECalibrate">Prepare data for JCGECalibrate</a><a id="Prepare-data-for-JCGECalibrate-1"></a><a class="docs-heading-anchor-permalink" href="#Prepare-data-for-JCGECalibrate" title="Permalink"></a></h2><p><code>write_canonical_dataset</code> writes the canonical <code>sam.csv</code> and <code>sets.csv</code> files read by <code>JCGECalibrate</code>. The preparation sequence is deliberately explicit:</p><ol><li>Download and normalize the chosen source accounts with JCGEImportData.</li><li>In the model project, record and apply source-to-model classifications, aggregation, valuation treatment, institutional and external-account treatment, and the chosen balancing method.</li><li>Build an <code>IOBundle</code> containing the intended goods, activities, factors, institutions, tax accounts, external accounts, intermediate use, supply, value added, and final demand. Add tax, trade, and factor-income tables when they are part of the intended SAM.</li><li>Check the IO and resulting SAM balances, resolve any imbalance deliberately, then write the canonical files.</li><li>Add optional <code>params.csv</code>, <code>subsets.csv</code>, <code>labels.csv</code>, and <code>mappings.csv</code> only when they are needed by the model specification.</li></ol><pre><code class="language-julia hljs">using JCGEImportData
+using JCGECalibrate
+
+check_io_balance(bundle)
+sam_table = sam_from_io(bundle)
+check_sam_balance(sam_table)
+write_canonical_dataset(&quot;data/calibration&quot;, bundle; sam = sam_table)
+
+sets = load_canonical_sets(&quot;data/calibration&quot;)
+sam = load_canonical_sam(&quot;data/calibration&quot;; goods = bundle.goods, factors = bundle.factors)</code></pre><p>The source import functions deliberately do not perform steps 2–4: mapping published accounts to a SAM and choosing its closure are model decisions. Pass an explicitly prepared parameter table as <code>params = ...</code> when the model needs <code>params.csv</code>.</p><h2 id="Read-a-direct-industry-by-industry-IO-table"><a class="docs-heading-anchor" href="#Read-a-direct-industry-by-industry-IO-table">Read a direct industry-by-industry IO table</a><a id="Read-a-direct-industry-by-industry-IO-table-1"></a><a class="docs-heading-anchor-permalink" href="#Read-a-direct-industry-by-industry-IO-table" title="Permalink"></a></h2><p><code>IOTAdapter</code> reads three local long-form files: intermediate transactions, final demand, and gross output. Its default columns are, respectively, <code>supplier_region</code>, <code>supplier_industry</code>, <code>user_region</code>, <code>user_industry</code>, and <code>value</code>; <code>supplier_region</code>, <code>supplier_industry</code>, <code>demand_region</code>, <code>final_use</code>, and <code>value</code>; and <code>region</code>, <code>industry</code>, and <code>value</code>.</p><pre><code class="language-julia hljs">iot = load_iot(IOTAdapter(
+    &quot;intermediate.csv&quot;, &quot;final_demand.csv&quot;, &quot;output.csv&quot;;
+    regions = region_codes,
+    industries = industry_codes,
+    final_uses = final_use_codes,
+    valuation = &quot;selected source valuation&quot;,
+    year = reference_year,
+))
+check_iot_balance(iot)</code></pre><p>Direct industry-by-industry sources have no product sales structure, so the adapter does not fabricate one. Source classifications, aggregation, and the mapping of value added or institutions to a SAM remain outside the import.</p><h2 id="Transform-an-SUT-with-Model-D"><a class="docs-heading-anchor" href="#Transform-an-SUT-with-Model-D">Transform an SUT with Model D</a><a id="Transform-an-SUT-with-Model-D-1"></a><a class="docs-heading-anchor-permalink" href="#Transform-an-SUT-with-Model-D" title="Permalink"></a></h2><p><code>symmetric_io_model_d</code> creates a sparse, industry-by-industry <code>MultiRegionIOT</code> using a fixed product-sales structure. For each product origin, every recorded product use is allocated among the industries that supplied that product in the source SUT.</p><pre><code class="language-julia hljs">iot = symmetric_io_model_d(sut)
+diagnostics = check_iot_balance(iot)
+
+diagnostics.sales       # product sales shares sum to one
+diagnostics.industries  # output versus allocated industry sales</code></pre><p>The transformation retains origin and destination regions. It converts only product rows: factor, tax, and other non-product rows remain source data for a model to map explicitly when constructing its SAM.</p><h2 id="BEA-Make-and-Use-tables"><a class="docs-heading-anchor" href="#BEA-Make-and-Use-tables">BEA Make and Use tables</a><a id="BEA-Make-and-Use-tables-1"></a><a class="docs-heading-anchor-permalink" href="#BEA-Make-and-Use-tables" title="Permalink"></a></h2><p><code>BEAAdapter</code> reads long-form Make and Use exports with explicit source columns:</p><pre><code class="language-julia hljs">adapter = BEAAdapter(
+    &quot;bea_make.csv&quot;,
+    &quot;bea_use.csv&quot;;
+    products = [&quot;1111A0&quot;, &quot;311000&quot;],
+    activities = [&quot;11&quot;, &quot;31G&quot;],
+    final_uses = [&quot;P3&quot;, &quot;P51&quot;],
+    region = &quot;US&quot;,
+    valuation = &quot;selected BEA published valuation&quot;,
+)
+sut = load_sut(adapter)
+check_sut_balance(sut)</code></pre><p>The Make export must contain <code>commodity</code>, <code>industry</code>, and <code>value</code>; the Use export must contain <code>commodity</code>, <code>account</code>, and <code>value</code>. <code>products</code>, <code>activities</code>, and <code>final_uses</code> identify the retained accounts without guessing from source totals or adjustment labels. The adapter preserves the selected BEA source valuation and does not reconcile producer and purchaser prices, import adjustments, margins, or taxes before a model selects an SUT-to-IO transformation.</p><h3 id="Download-BEA-tables-once"><a class="docs-heading-anchor" href="#Download-BEA-tables-once">Download BEA tables once</a><a id="Download-BEA-tables-once-1"></a><a class="docs-heading-anchor-permalink" href="#Download-BEA-tables-once" title="Permalink"></a></h3><p><code>download_bea</code> requires a registered BEA API key. The caller selects a specific year and published Make/Use table pair; the key is never retained in the cache manifest.</p><pre><code class="language-julia hljs">release = BEARelease(reference_year, make_table_id, use_table_id)
+files = download_bea(release, &quot;data/raw/bea&quot;; api_key = ENV[&quot;BEA_API_KEY&quot;])</code></pre><p>The cache contains raw API responses, long-form Make and Use CSV files, and a manifest with the selected table identifiers, source year, retrieval time, and checksums. Choose table identifiers through the BEA InputOutput API metadata; the package does not assume a preferred BEA table family.</p><h3 id="Download-BEA-national-accounts-once"><a class="docs-heading-anchor" href="#Download-BEA-national-accounts-once">Download BEA national accounts once</a><a id="Download-BEA-national-accounts-once-1"></a><a class="docs-heading-anchor-permalink" href="#Download-BEA-national-accounts-once" title="Permalink"></a></h3><p><code>BEANationalAccountsRelease</code> caches a caller-selected published BEA National Income and Product Accounts (NIPA) table. It preserves the table name, line, series code, description, metric, unit, unit multiplier, and value for a later explicit SAM mapping:</p><pre><code class="language-julia hljs">release = BEANationalAccountsRelease(2016, &quot;T10105&quot;)
+files = download_bea_national_accounts(
+    release,
+    &quot;data/raw/bea_national_accounts&quot;;
+    api_key = ENV[&quot;BEA_API_KEY&quot;],
+    lines = [&quot;1&quot;],
+    metrics = [&quot;Current Dollars&quot;],
+)</code></pre><p>The cache manifest records source selection and checksums, but never the API key. It does not select NIPA tables or translate their lines into SAM accounts.</p><h2 id="Eurostat-national-SUTs"><a class="docs-heading-anchor" href="#Eurostat-national-SUTs">Eurostat national SUTs</a><a id="Eurostat-national-SUTs-1"></a><a class="docs-heading-anchor-permalink" href="#Eurostat-national-SUTs" title="Permalink"></a></h2><p><code>EurostatNationalSUTAdapter</code> reads a selected local national SUT export. The supply file has <code>product</code>, <code>activity</code>, and <code>value</code>; the use file has <code>product</code>, <code>account</code>, and <code>value</code> by default.</p><pre><code class="language-julia hljs">sut = load_sut(EurostatNationalSUTAdapter(
+    &quot;national_supply.csv&quot;, &quot;national_use.csv&quot;;
+    products = product_codes,
+    activities = activity_codes,
+    final_uses = final_use_codes,
+    region = &quot;DE&quot;,
+    valuation = &quot;selected Eurostat source valuation&quot;,
+    year = reference_year,
+))
+check_sut_balance(sut)</code></pre><h3 id="Download-a-national-SUT-once"><a class="docs-heading-anchor" href="#Download-a-national-SUT-once">Download a national SUT once</a><a id="Download-a-national-SUT-once-1"></a><a class="docs-heading-anchor-permalink" href="#Download-a-national-SUT-once" title="Permalink"></a></h3><p>The default release pairs Eurostat&#39;s annual current-price supply table (<code>naio_10_cp15</code>) with its annual use table at purchasers&#39; prices (<code>naio_10_cp16</code>). The retained products, activities, and final-use accounts are explicit:</p><pre><code class="language-julia hljs">release = EurostatNationalSUTRelease(2020, &quot;DE&quot;)
+files = download_eurostat_national_sut(
+    release,
+    &quot;data/raw/eurostat_national&quot;;
+    products = [&quot;CPA_C26&quot;, &quot;CPA_C27&quot;],
+    activities = [&quot;C26&quot;, &quot;C27&quot;],
+    final_uses = [&quot;P3_S14&quot;],
+)
+
+sut = load_sut(EurostatNationalSUTAdapter(
+    files.supply_path,
+    files.use_path;
+    products = [&quot;CPA_C26&quot;, &quot;CPA_C27&quot;],
+    activities = [&quot;C26&quot;, &quot;C27&quot;],
+    final_uses = [&quot;P3_S14&quot;],
+    region = &quot;DE&quot;,
+    valuation = &quot;Eurostat annual supply at basic prices and use at purchasers&#39; prices&quot;,
+    year = 2020,
+))</code></pre><p>The cache retains raw JSON-stat responses, normalized CSV files, and a checksum manifest. Another published supply/use pair can be selected through the release keywords. The caller chooses the valuation and must reconcile imports, margins, taxes, and any balancing needed for the model; the importer does not construct a calibration dataset automatically.</p><h3 id="Download-Eurostat-national-accounts-once"><a class="docs-heading-anchor" href="#Download-Eurostat-national-accounts-once">Download Eurostat national accounts once</a><a id="Download-Eurostat-national-accounts-once-1"></a><a class="docs-heading-anchor-permalink" href="#Download-Eurostat-national-accounts-once" title="Permalink"></a></h3><p><code>EurostatNationalAccountsRelease</code> caches selected source series for later, explicit SAM preparation. It preserves published institutional-sector and transaction dimensions rather than mapping them to model accounts.</p><pre><code class="language-julia hljs">release = EurostatNationalAccountsRelease(
+    2016,
+    &quot;nasa_10_nf_tr&quot;;
+    unit = &quot;CP_MEUR&quot;,
+    dimensions = [&quot;direct&quot;, &quot;na_item&quot;, &quot;sector&quot;],
+)
+files = download_eurostat_national_accounts(
+    release,
+    &quot;data/raw/eurostat_national_accounts&quot;;
+    regions = [&quot;DE&quot;, &quot;FR&quot;],
+    selections = Dict(
+        &quot;direct&quot; =&gt; [&quot;PAID&quot;, &quot;RECV&quot;],
+        &quot;na_item&quot; =&gt; [&quot;D1&quot;],
+        &quot;sector&quot; =&gt; [&quot;S1&quot;, &quot;S13&quot;, &quot;S14&quot;],
+    ),
+)</code></pre><p>The normalized CSV contains <code>region</code>, the declared source-dimension columns, <code>unit</code>, and <code>value</code>; its manifest retains the query, source codes, raw responses, and checksums. Other Eurostat national-accounts dataflows use the same interface with their own explicitly supplied dimensions and selections.</p><h3 id="Eurostat-satellite-data"><a class="docs-heading-anchor" href="#Eurostat-satellite-data">Eurostat satellite data</a><a id="Eurostat-satellite-data-1"></a><a class="docs-heading-anchor-permalink" href="#Eurostat-satellite-data" title="Permalink"></a></h3><p><code>SatelliteAdapter</code> preserves non-monetary source data separately from IO accounts. Its local long-form input must contain <code>region</code>, <code>industry</code>, <code>indicator</code>, <code>unit</code>, and <code>value</code>.</p><pre><code class="language-julia hljs">satellite = load_satellite(SatelliteAdapter(
+    &quot;satellite.csv&quot;;
+    regions = region_codes,
+    industries = industry_codes,
+    indicators = [&quot;employment&quot;, &quot;material_use&quot;],
+    source = &quot;selected satellite source&quot;,
+    year = reference_year,
+))</code></pre><p><code>EurostatSatelliteRelease</code> declares the source dimensions explicitly. For example, this downloads national-accounts employment by NACE industry:</p><pre><code class="language-julia hljs">release = EurostatSatelliteRelease(
+    2020,
+    &quot;nama_10_a64_e&quot;;
+    unit = &quot;THS_PER&quot;,
+    industry_dimension = &quot;nace_r2&quot;,
+    indicator_dimension = &quot;na_item&quot;,
+)
+files = download_eurostat_satellite(
+    release,
+    &quot;data/raw/eurostat_satellites&quot;;
+    regions = [&quot;DE&quot;, &quot;FR&quot;],
+    industries = [&quot;C26&quot;, &quot;C27&quot;],
+    indicators = [&quot;EMP_DC&quot;],
+)</code></pre><p>The same interface supports labour compensation from <code>nama_10_a64</code> and air-emissions accounts from <code>env_ac_ainah_r2</code>. Economy-wide material-flow accounts from <code>env_ac_mfa</code> have no industry dimension: use <code>industry_dimension = nothing</code>, filter on the published material-account dimension, and explicitly provide <code>aggregate_industry</code>.</p><h2 id="Eurostat-FIGARO"><a class="docs-heading-anchor" href="#Eurostat-FIGARO">Eurostat FIGARO</a><a id="Eurostat-FIGARO-1"></a><a class="docs-heading-anchor-permalink" href="#Eurostat-FIGARO" title="Permalink"></a></h2><p><code>EurostatAdapter</code> reads local flat FIGARO supply and use tables into a <code>MultiRegionSUT</code>.</p><pre><code class="language-julia hljs">adapter = EurostatAdapter(
+    &quot;figaro_supply.tsv&quot;,
+    &quot;figaro_use.tsv&quot;,
+)
+sut = load_sut(adapter)
+product_balance = check_sut_balance(sut)</code></pre><p>The default schema expects tab-separated fields named <code>row_country</code>, <code>row_code</code>, <code>col_country</code>, <code>col_code</code>, and <code>value_meur</code>. It identifies product rows through the <code>CPA_</code> prefix and resolves <code>DOM</code> product origins to the destination region. Source regions, products, activities, final uses, and product origins are retained without aggregation.</p><p>For equivalent FIGARO exports with another layout, pass an explicit schema:</p><pre><code class="language-julia hljs">schema = FIGAROFlatSchema(
+    row_region = :origin,
+    row_code = :row,
+    column_region = :destination,
+    column_code = :column,
+    value = :value,
+    delimiter = &#39;,&#39;,
+)
+sut = load_sut(EurostatAdapter(&quot;supply.csv&quot;, &quot;use.csv&quot;; schema))</code></pre><p>The output is an SUT rather than an <code>IOBundle</code>. Regional and industry aggregation, factor and tax mapping, and institutional closure remain explicit model-level choices.</p><h3 id="Download-a-FIGARO-release-once"><a class="docs-heading-anchor" href="#Download-a-FIGARO-release-once">Download a FIGARO release once</a><a id="Download-a-FIGARO-release-once-1"></a><a class="docs-heading-anchor-permalink" href="#Download-a-FIGARO-release-once" title="Permalink"></a></h3><p><code>load_sut</code> is local-only. Downloading is a separate, explicit setup action:</p><pre><code class="language-julia hljs">release = FIGARORelease(2016)
+files = download_figaro(release, &quot;data/raw/figaro&quot;; regions = [&quot;DE&quot;, &quot;FR&quot;])</code></pre><p><code>download_figaro</code> uses Eurostat&#39;s official SDMX API, refuses to overwrite a cache, and writes a TOML manifest with the queried dataflows, query URLs, retrieval time, local filenames, and SHA-256 checksums. The region set is always supplied by the calling model. Subsequent imports use <code>files.supply_path</code> and <code>files.use_path</code> locally.</p><h2 id="OECD-ICIO"><a class="docs-heading-anchor" href="#OECD-ICIO">OECD ICIO</a><a id="OECD-ICIO-1"></a><a class="docs-heading-anchor-permalink" href="#OECD-ICIO" title="Permalink"></a></h2><p><code>OECDICIOAdapter</code> uses the same three-file direct-IO layout while recording the selected OECD Inter-Country Input-Output (ICIO) edition in provenance:</p><pre><code class="language-julia hljs">iot = load_iot(OECDICIOAdapter(
+    &quot;icio_intermediate.csv&quot;, &quot;icio_final_demand.csv&quot;, &quot;icio_output.csv&quot;;
+    edition = &quot;selected OECD ICIO edition&quot;,
+    regions = region_codes,
+    industries = industry_codes,
+    final_uses = final_use_codes,
+    valuation = &quot;basic prices&quot;,
+    year = reference_year,
+))</code></pre><h3 id="Download-an-OECD-ICIO-archive-once"><a class="docs-heading-anchor" href="#Download-an-OECD-ICIO-archive-once">Download an OECD ICIO archive once</a><a id="Download-an-OECD-ICIO-archive-once-1"></a><a class="docs-heading-anchor-permalink" href="#Download-an-OECD-ICIO-archive-once" title="Permalink"></a></h3><p>The archive URL, edition, and period are chosen explicitly by the calling workflow:</p><pre><code class="language-julia hljs">release = OECDICIORelease(
+    &quot;2025 edition&quot;,
+    &quot;2016-2022&quot;,
+    &quot;https://webfs-sti.oecd.org/files/STI-PIE/ICIO/2025/2016-2022_SML.zip&quot;,
+)
+files = download_oecd_icio(release, &quot;data/raw/oecd_icio&quot;)</code></pre><p>Normalize one selected year and source-code selection to the package&#39;s local IO layout:</p><pre><code class="language-julia hljs">io_files = normalize_oecd_icio(
+    release,
+    files.archive_path,
+    &quot;data/interim/oecd_icio&quot;;
+    reference_year = 2020,
+    regions = region_codes,
+    industries = industry_codes,
+    final_uses = final_use_codes,
+)</code></pre><p>The archive is structurally verified before caching and the normalized files receive their own checksum manifest. The reader supports the regular OECD ICIO CSV archive structure but does not choose an edition, geography, aggregation, factor treatment, or source-to-SAM pipeline. OECD ICIO is an annual symmetric industry-by-industry system; see the <a href="https://www.oecd.org/en/data/datasets/inter-country-input-output-tables.html">OECD ICIO documentation</a>.</p><h2 id="Scope-boundary"><a class="docs-heading-anchor" href="#Scope-boundary">Scope boundary</a><a id="Scope-boundary-1"></a><a class="docs-heading-anchor-permalink" href="#Scope-boundary" title="Permalink"></a></h2><p>The package supports CGE calibration but does not define a complete source-to-SAM pipeline. Regional or sector aggregation, trade and institutional accounts, balancing methods, and model closure are deliberately left to the model using these imported data.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Monday 21 September 2026 19:00">Monday 21 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
