@@ -21,6 +21,10 @@ cached BEA Make/Use and national-accounts tables. Downloaded source data are
 verified and cached locally before use. See the Usage page for each input
 contract and its scope.
 
+`write_canonical_dataset` produces the canonical `sam.csv` and `sets.csv`
+files read by JCGECalibrate. The Usage page explains the explicit preparation
+steps between source accounts and a calibration dataset.
+
 ## Scope boundary
 
 JCGEImportData provides source import, normalization, validation, and selected

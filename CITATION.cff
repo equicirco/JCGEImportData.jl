@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: JCGEImportData.jl - Canonical IO/SAM schema and import utilities for JCGE.jl.
 message: >-
-  v0.1.0 - Initial public release.
+  v0.2.0 - External economic-account import, normalization, validation, and JCGECalibrate preparation support.
 type: software
 doi: 10.5281/zenodo.18274911
 authors:
