@@ -7,16 +7,46 @@ module JCGEImportData
 using CSV
 using DataFrames
 
-include("Adapters.jl")
-using .Adapters
-
 export IOBundle
 export LabeledMatrix
+export MultiRegionSUT
+export MultiRegionIOT
+export SatelliteTable
 export EurostatAdapter
-export GTAPAdapter
+export BEAAdapter
+export IOTAdapter
+export OECDICIOAdapter
+export EurostatNationalSUTAdapter
+export SatelliteAdapter
+export FIGAROFlatSchema
+export BEAFlatSchema
+export IOTFlatSchema
+export NationalSUTFlatSchema
+export SatelliteFlatSchema
+export OECDICIORelease
+export download_oecd_icio
+export normalize_oecd_icio
+export EurostatNationalSUTRelease
+export download_eurostat_national_sut
+export EurostatSatelliteRelease
+export download_eurostat_satellite
+export EurostatNationalAccountsRelease
+export download_eurostat_national_accounts
+export FIGARORelease
+export download_figaro
+export BEARelease
+export download_bea
+export BEANationalAccountsRelease
+export download_bea_national_accounts
 export load_iobundle
+export load_sut
+export load_iot
+export load_satellite
 export check_sam_balance
 export check_io_balance
+export check_sut_balance
+export check_iot_balance
+export symmetric_io_model_d
 export labeled_matrix_from_dataframe
 export sam_from_io
 export sets_from_bundle
@@ -106,6 +136,215 @@ struct IOBundle
     imports::Union{LabeledMatrix, Nothing}
     exports::Union{LabeledMatrix, Nothing}
     factor_income::Union{LabeledMatrix, Nothing}
+end
+
+"""
+    MultiRegionSUT
+
+Source-neutral representation of a multi-region supply-use table. `supply`
+contains `product_origin`, `product`, `activity_region`, `activity`, and
+`value`; `use` contains `product_origin`, `product`, `use_region`,
+`use_account`, and `value`.
+
+This represents data only. It does not choose a symmetric IO transformation,
+regional aggregation, institutional closure, or model specification.
+"""
+struct MultiRegionSUT
+    regions::Vector{String}
+    products::Vector{String}
+    activities::Vector{String}
+    final_uses::Vector{String}
+    supply::DataFrame
+    use::DataFrame
+    source_tables::Dict{String, DataFrame}
+    provenance::Dict{String, String}
+end
+
+"""
+    MultiRegionIOT
+
+Source-neutral sparse, multi-region, industry-by-industry IO representation.
+`sales_structure` records the Model-D allocation of each product to its
+producing industries; `intermediate` and `final_demand` record the resulting
+industry sales. For a source table that is already industry-by-industry,
+`products` and `sales_structure` are empty. It does not impose factor,
+institution, tax, or closure accounts.
+"""
+struct MultiRegionIOT
+    regions::Vector{String}
+    products::Vector{String}
+    industries::Vector{String}
+    final_uses::Vector{String}
+    sales_structure::DataFrame
+    intermediate::DataFrame
+    final_demand::DataFrame
+    industry_output::DataFrame
+    provenance::Dict{String, String}
+end
+
+"""
+    SatelliteTable(; regions, industries, indicators, data, provenance=Dict())
+
+Source-neutral satellite observations keyed by region, industry, and indicator.
+Each observation carries its source unit, so physical, environmental, and
+socioeconomic quantities remain separate from monetary IO tables.
+"""
+struct SatelliteTable
+    regions::Vector{String}
+    industries::Vector{String}
+    indicators::Vector{String}
+    data::DataFrame
+    provenance::Dict{String, String}
+end
+
+function SatelliteTable(
+    ;
+    regions::Vector{String},
+    industries::Vector{String},
+    indicators::Vector{String},
+    data::DataFrame,
+    provenance::Dict{String, String} = Dict{String, String}(),
+)
+    length(unique(regions)) == length(regions) || error("Satellite regions must be unique.")
+    length(unique(industries)) == length(industries) || error("Satellite industries must be unique.")
+    length(unique(indicators)) == length(indicators) || error("Satellite indicators must be unique.")
+    required = ["region", "industry", "indicator", "unit", "value"]
+    missing = setdiff(required, string.(names(data)))
+    isempty(missing) || error("Satellite data is missing required columns: $(join(missing, ", ")).")
+    normalized = DataFrame(
+        region = string.(data[!, "region"]),
+        industry = string.(data[!, "industry"]),
+        indicator = string.(data[!, "indicator"]),
+        unit = string.(data[!, "unit"]),
+        value = Float64.(data[!, "value"]),
+    )
+    all(isfinite, normalized.value) || error("Satellite values must be finite.")
+    all(in(Set(regions)), normalized.region) || error("Satellite regions must be declared.")
+    all(in(Set(industries)), normalized.industry) || error("Satellite industries must be declared.")
+    all(in(Set(indicators)), normalized.indicator) || error("Satellite indicators must be declared.")
+    all(unit -> !isempty(strip(unit)), normalized.unit) || error("Satellite units cannot be empty.")
+    return SatelliteTable(regions, industries, indicators, normalized, provenance)
+end
+
+"""
+    MultiRegionIOT(; regions, products, industries, final_uses,
+                   sales_structure, intermediate, final_demand, industry_output,
+                   provenance=Dict())
+
+Create and validate a normalized multi-region industry-by-industry IO table.
+"""
+function MultiRegionIOT(
+    ;
+    regions::Vector{String},
+    products::Vector{String},
+    industries::Vector{String},
+    final_uses::Vector{String},
+    sales_structure::DataFrame,
+    intermediate::DataFrame,
+    final_demand::DataFrame,
+    industry_output::DataFrame,
+    provenance::Dict{String, String} = Dict{String, String}(),
+)
+    length(unique(regions)) == length(regions) || error("Region labels must be unique.")
+    length(unique(products)) == length(products) || error("Product labels must be unique.")
+    length(unique(industries)) == length(industries) || error("Industry labels must be unique.")
+    length(unique(final_uses)) == length(final_uses) || error("Final-use labels must be unique.")
+    required = Dict(
+        "sales_structure" => ["product_origin", "product", "supplier_region", "supplier_industry", "supply_value", "product_output", "sales_share"],
+        "intermediate" => ["supplier_region", "supplier_industry", "user_region", "user_industry", "value"],
+        "final_demand" => ["supplier_region", "supplier_industry", "demand_region", "final_use", "value"],
+        "industry_output" => ["region", "industry", "value"],
+    )
+    tables = Dict(
+        "sales_structure" => sales_structure,
+        "intermediate" => intermediate,
+        "final_demand" => final_demand,
+        "industry_output" => industry_output,
+    )
+    for (name, columns) in required
+        missing = setdiff(columns, string.(names(tables[name])))
+        isempty(missing) || error("$(name) is missing required columns: $(join(missing, ", ")).")
+    end
+    for name in ("intermediate", "final_demand", "industry_output")
+        table = tables[name]
+        values = Float64.(table[!, "value"])
+        all(isfinite, values) || error("$(name) values must be finite.")
+    end
+    for column in ("supply_value", "product_output", "sales_share")
+        values = Float64.(sales_structure[!, column])
+        all(isfinite, values) || error("sales_structure $(column) values must be finite.")
+    end
+    return MultiRegionIOT(
+        regions,
+        products,
+        industries,
+        final_uses,
+        DataFrame(sales_structure),
+        DataFrame(intermediate),
+        DataFrame(final_demand),
+        DataFrame(industry_output),
+        provenance,
+    )
+end
+
+"""
+    MultiRegionSUT(; regions, products, activities, final_uses, supply, use,
+                   source_tables=Dict(), provenance=Dict())
+
+Create a normalized multi-region SUT and validate its required columns and
+account labels.
+"""
+function MultiRegionSUT(
+    ;
+    regions::Vector{String},
+    products::Vector{String},
+    activities::Vector{String},
+    final_uses::Vector{String},
+    supply::DataFrame,
+    use::DataFrame,
+    source_tables::Dict{String, DataFrame} = Dict{String, DataFrame}(),
+    provenance::Dict{String, String} = Dict{String, String}(),
+)
+    length(unique(regions)) == length(regions) || error("Region labels must be unique.")
+    length(unique(products)) == length(products) || error("Product labels must be unique.")
+    length(unique(activities)) == length(activities) || error("Activity labels must be unique.")
+    length(unique(final_uses)) == length(final_uses) || error("Final-use labels must be unique.")
+    supply_columns = ["product_origin", "product", "activity_region", "activity", "value"]
+    use_columns = ["product_origin", "product", "use_region", "use_account", "value"]
+    missing_supply = setdiff(supply_columns, string.(names(supply)))
+    missing_use = setdiff(use_columns, string.(names(use)))
+    isempty(missing_supply) || error("Supply table is missing required columns: $(join(missing_supply, ", ")).")
+    isempty(missing_use) || error("Use table is missing required columns: $(join(missing_use, ", ")).")
+
+    normalized_supply = DataFrame(
+        product_origin = string.(supply[!, "product_origin"]),
+        product = string.(supply[!, "product"]),
+        activity_region = string.(supply[!, "activity_region"]),
+        activity = string.(supply[!, "activity"]),
+        value = Float64.(supply[!, "value"]),
+    )
+    normalized_use = DataFrame(
+        product_origin = string.(use[!, "product_origin"]),
+        product = string.(use[!, "product"]),
+        use_region = string.(use[!, "use_region"]),
+        use_account = string.(use[!, "use_account"]),
+        value = Float64.(use[!, "value"]),
+    )
+    all(isfinite, normalized_supply.value) || error("Supply values must be finite.")
+    all(isfinite, normalized_use.value) || error("Use values must be finite.")
+    region_set = Set(regions)
+    product_set = Set(products)
+    activity_set = Set(activities)
+    account_set = union(activity_set, Set(final_uses))
+    all(in(region_set), normalized_supply.product_origin) || error("Supply product origins must be declared regions.")
+    all(in(region_set), normalized_supply.activity_region) || error("Supply activity regions must be declared regions.")
+    all(in(region_set), normalized_use.product_origin) || error("Use product origins must be declared regions.")
+    all(in(region_set), normalized_use.use_region) || error("Use regions must be declared regions.")
+    all(in(product_set), normalized_supply.product) || error("Supply products must be declared products.")
+    all(in(product_set), normalized_use.product) || error("Use products must be declared products.")
+    all(in(activity_set), normalized_supply.activity) || error("Supply activities must be declared activities.")
+    all(in(account_set), normalized_use.use_account) || error("Use accounts must be activities or final-use accounts.")
+    return MultiRegionSUT(regions, products, activities, final_uses, normalized_supply, normalized_use, source_tables, provenance)
 end
 
 
@@ -346,6 +585,31 @@ function check_io_balance(bundle::IOBundle; atol::Float64 = 1e-6)
 end
 
 """
+    check_sut_balance(sut; atol=1e-6)
+
+Report global supply and use totals for each product in a `MultiRegionSUT`.
+The check is descriptive: it does not alter the source data.
+"""
+function check_sut_balance(sut::MultiRegionSUT; atol::Float64 = 1e-6)
+    rows = NamedTuple[]
+    for product in sut.products
+        supply = sum(row.value for row in eachrow(sut.supply) if row.product == product)
+        use = sum(row.value for row in eachrow(sut.use) if row.product == product)
+        push!(rows, (
+            product = product,
+            supply = supply,
+            use = use,
+            imbalance = supply - use,
+            balanced = abs(supply - use) <= atol,
+        ))
+    end
+    return DataFrame(rows)
+end
+
+include("Transformations.jl")
+using .Transformations
+
+"""
     _assert_labels(mat, rows, cols, name)
 
 Internal: ensure labeled matrix rows/cols match expected ordering.
@@ -444,5 +708,11 @@ function _append_set!(set_names::Vector{String}, items::Vector{String}, set_name
     end
     return nothing
 end
+
+include("Adapters.jl")
+using .Adapters
+
+include("TableAdapters.jl")
+using .TableAdapters
 
 end # module

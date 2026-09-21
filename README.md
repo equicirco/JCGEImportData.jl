@@ -13,14 +13,18 @@ A Computable General Equilibrium (CGE) model is a quantitative economic model th
 [JCGE](https://jcge.org) is a block-based CGE modeling and execution framework in Julia. It defines a shared RunSpec structure and reusable blocks so models can be assembled, validated, solved, and compared consistently across packages.
 
 ## What is this package?
-Import utilities that extract data from external sources (e.g., GTAP, Eurostat)
-
-and emit canonical [JCGE](https://jcge.org) CSV datasets for model calibration.
+Import utilities that normalize external economic accounts for [JCGE](https://jcge.org)
+model calibration.
 
 Scope:
-- ETL from external datasets into the canonical schema.
-- No model-specific logic (writes files under a model data directory).
-- Canonical schema is defined in `packages/JCGECalibrate/README.md`.
+- ETL from external datasets into normalized SUT or IO/SAM inputs.
+- No model-specific aggregation, calibration, or closure assumptions.
+- Canonical IO/SAM data can be written with `write_canonical_dataset`.
+
+JCGEImportData supports CGE calibration but does not prescribe a complete
+pipeline from source tables to a Social Accounting Matrix. Sector and regional
+aggregation, trade and institutional treatment, balancing choices, and SAM
+closure are model-specific decisions.
 
 ## Minimal IO bundle
 
@@ -76,21 +80,346 @@ io_balance.activities
 `check_io_balance` reports goods balance (output vs. use+final+exports-imports)
 and activity balance (output vs. intermediate+value_added).
 
-## Adapters
+## Eurostat FIGARO
 
-Adapter stubs define the expected entry points for external data sources:
+`EurostatAdapter` reads local flat supply and use exports from the
+[Eurostat FIGARO system](https://ec.europa.eu/eurostat/en/web/esa-supply-use-input-tables/database)
+into `MultiRegionSUT`. It preserves all source regions, product origins,
+activities, and final-use accounts. It does not aggregate regions or industries,
+create a symmetric IO table, or impose a model closure.
 
 ```julia
-bundle = load_iobundle(EurostatAdapter("path/or/source"))
-bundle = load_iobundle(GTAPAdapter("path/or/source"))
+using JCGEImportData
+
+adapter = EurostatAdapter(
+    "figaro_supply.tsv",
+    "figaro_use.tsv",
+)
+sut = load_sut(adapter)
+check_sut_balance(sut)
 ```
 
-These are placeholders to be filled with source-specific mappings into the
-IO bundle.
+The default flat-table schema expects the columns
+`row_country`, `row_code`, `col_country`, `col_code`, and `value_meur`, with
+tab delimiters. `FIGAROFlatSchema` lets callers map equivalent column names,
+delimiters, domestic-origin markers, and product-code prefixes. A `DOM` origin
+in a use row is resolved to the corresponding destination region.
 
-See `packages/JCGEImportData/ADAPTER_TEMPLATE.md` for a checklist of required
-raw tables and expected shapes.
-The adapter stubs live in `packages/JCGEImportData/src/Adapters.jl`.
+The resulting SUT is deliberately an intermediate representation. Models can
+apply the supplied `symmetric_io_model_d(sut)` transformation, which uses the
+fixed-product sales structure convention, or make another explicit SUT-to-IO
+choice. Regional and industry aggregation, factor and tax mapping, and closure
+remain model-level decisions.
+
+```julia
+iot = symmetric_io_model_d(sut)
+diagnostics = check_iot_balance(iot)
+```
+
+`MultiRegionIOT` stores sparse industry-to-industry intermediate sales,
+industry-to-final-use sales, industry output, and the product sales structure
+used for the allocation. Non-product source rows are not transformed because
+their mapping to factor, tax, and institutional accounts is model-specific.
+
+## Direct industry-by-industry IO tables
+
+`IOTAdapter` reads three local long-form files: intermediate transactions,
+final demand, and gross output. The default intermediate fields are
+`supplier_region`, `supplier_industry`, `user_region`, `user_industry`, and
+`value`; the final-demand fields replace the user fields with `demand_region`
+and `final_use`; output uses `region`, `industry`, and `value`.
+
+```julia
+iot = load_iot(IOTAdapter(
+    "intermediate.csv", "final_demand.csv", "output.csv";
+    regions = region_codes,
+    industries = industry_codes,
+    final_uses = final_use_codes,
+    valuation = "selected source valuation",
+    year = reference_year,
+))
+check_iot_balance(iot)
+```
+
+This direct-IO representation has no product sales structure, because none is
+observed or needed. `OECDICIOAdapter` uses the same local layout and adds the
+selected OECD ICIO edition to provenance:
+
+```julia
+iot = load_iot(OECDICIOAdapter(
+    "icio_intermediate.csv", "icio_final_demand.csv", "icio_output.csv";
+    edition = "selected OECD ICIO edition",
+    regions = region_codes,
+    industries = industry_codes,
+    final_uses = final_use_codes,
+    valuation = "basic prices",
+    year = reference_year,
+))
+```
+
+### Download an OECD ICIO archive once
+
+`download_oecd_icio` caches one caller-selected official ICIO archive with a
+checksum manifest. The archive URL, edition, and period are explicit, so a
+model decides which OECD release to use:
+
+```julia
+release = OECDICIORelease(
+    "2025 edition",
+    "2016-2022",
+    "https://webfs-sti.oecd.org/files/STI-PIE/ICIO/2025/2016-2022_SML.zip",
+)
+files = download_oecd_icio(release, "data/raw/oecd_icio")
+```
+
+Normalize one selected year and source-code selection to the local IO layout:
+
+```julia
+io_files = normalize_oecd_icio(
+    release,
+    files.archive_path,
+    "data/interim/oecd_icio";
+    reference_year = 2020,
+    regions = region_codes,
+    industries = industry_codes,
+    final_uses = final_use_codes,
+)
+```
+
+The archive is structurally verified before caching and the normalized files
+receive their own checksum manifest. This reader supports the regular OECD
+ICIO CSV archive structure. It does not choose an edition, geography,
+aggregation, factor treatment, or source-to-SAM pipeline.
+
+## Eurostat national SUTs
+
+`EurostatNationalSUTAdapter` reads a selected local long-form national supply
+and use export. Its default supply columns are `product`, `activity`, and
+`value`; use uses `product`, `account`, and `value`.
+
+```julia
+sut = load_sut(EurostatNationalSUTAdapter(
+    "national_supply.csv", "national_use.csv";
+    products = product_codes,
+    activities = activity_codes,
+    final_uses = final_use_codes,
+    region = "DE",
+    valuation = "selected Eurostat source valuation",
+    year = reference_year,
+))
+```
+
+### Download a national SUT once
+
+The default release pairs Eurostat's annual current-price supply table
+(`naio_10_cp15`) with the annual use table at purchasers' prices
+(`naio_10_cp16`). Product, activity, and final-use selections are explicit:
+
+```julia
+release = EurostatNationalSUTRelease(2020, "DE")
+files = download_eurostat_national_sut(
+    release,
+    "data/raw/eurostat_national";
+    products = ["CPA_C26", "CPA_C27"],
+    activities = ["C26", "C27"],
+    final_uses = ["P3_S14"],
+)
+
+sut = load_sut(EurostatNationalSUTAdapter(
+    files.supply_path,
+    files.use_path;
+    products = ["CPA_C26", "CPA_C27"],
+    activities = ["C26", "C27"],
+    final_uses = ["P3_S14"],
+    region = "DE",
+    valuation = "Eurostat annual supply at basic prices and use at purchasers' prices",
+    year = 2020,
+))
+```
+
+The cache retains raw JSON-stat responses, normalized local CSV files, and a
+checksum manifest. Another published supply/use pair can be selected through
+the release keywords. The caller must still select the appropriate valuation
+and reconcile imports, margins, taxes, and any balancing required by the
+model; the downloader does not turn the published tables into a calibration
+dataset automatically.
+
+## Eurostat national accounts
+
+`EurostatNationalAccountsRelease` downloads selected national-account series
+for later, explicit SAM preparation. It preserves the published institutional
+sector and transaction dimensions instead of assigning them to model accounts.
+For example, annual non-financial sector accounts can provide payments and
+receipts of compensation of employees:
+
+```julia
+release = EurostatNationalAccountsRelease(
+    2016,
+    "nasa_10_nf_tr";
+    unit = "CP_MEUR",
+    dimensions = ["direct", "na_item", "sector"],
+)
+files = download_eurostat_national_accounts(
+    release,
+    "data/raw/eurostat_national_accounts";
+    regions = ["DE", "FR"],
+    selections = Dict(
+        "direct" => ["PAID", "RECV"],
+        "na_item" => ["D1"],
+        "sector" => ["S1", "S13", "S14"],
+    ),
+)
+```
+
+The output has `region`, the declared source dimensions, `unit`, and `value`,
+with raw API responses and checksums in its manifest. Other Eurostat national
+accounts dataflows use the same interface when their source dimensions and
+selected codes are declared by the calling workflow.
+
+## Satellite tables
+
+`SatelliteAdapter` reads local long-form observations with `region`,
+`industry`, `indicator`, `unit`, and `value` fields. It preserves the unit on
+every observation and keeps physical quantities, employment, emissions, and
+material use separate from monetary IO accounts.
+
+```julia
+satellite = load_satellite(SatelliteAdapter(
+    "satellite.csv";
+    regions = region_codes,
+    industries = industry_codes,
+    indicators = ["employment", "material_use"],
+    source = "selected satellite source",
+    year = reference_year,
+))
+```
+
+### Download Eurostat satellite data once
+
+`EurostatSatelliteRelease` makes source dimensions explicit and writes a local
+unit-preserving table. For example, national-accounts employment by NACE
+industry can be selected as follows:
+
+```julia
+release = EurostatSatelliteRelease(
+    2020,
+    "nama_10_a64_e";
+    unit = "THS_PER",
+    industry_dimension = "nace_r2",
+    indicator_dimension = "na_item",
+)
+files = download_eurostat_satellite(
+    release,
+    "data/raw/eurostat_satellites";
+    regions = ["DE", "FR"],
+    industries = ["C26", "C27"],
+    indicators = ["EMP_DC"],
+)
+```
+
+The same interface supports labour compensation from `nama_10_a64` (using
+`nace_r2` and `na_item`, for example `D1`, with unit `CP_MEUR`) and air
+emissions accounts from `env_ac_ainah_r2` (using `nace_r2` and `airpol`, with
+unit `T` or `THS_T`). Economy-wide material-flow accounts from `env_ac_mfa`
+have no industry dimension: set `industry_dimension = nothing`, filter on
+their published account dimension, and explicitly choose `aggregate_industry`
+for the output record. The downloader retains raw JSON-stat responses and a
+checksum manifest; it does not infer mappings between source classifications
+and a model's industries.
+
+## BEA Make and Use tables
+
+`BEAAdapter` reads local, long-form Make and Use exports from the U.S. Bureau
+of Economic Analysis. The Make file has `commodity`, `industry`, and `value`
+columns; the Use file has `commodity`, `account`, and `value` columns. A caller
+explicitly identifies the retained commodity, industry, and final-use codes and
+records the valuation of the selected source tables.
+
+```julia
+adapter = BEAAdapter(
+    "bea_make.csv",
+    "bea_use.csv";
+    products = ["1111A0", "311000"],
+    activities = ["11", "31G"],
+    final_uses = ["P3", "P51"],
+    region = "US",
+    valuation = "selected BEA published valuation",
+    year = 2022,
+)
+sut = load_sut(adapter)
+```
+
+BEA publishes Make, Use, Supply, and import-related tables with different
+valuation and adjustment conventions. This adapter preserves those source
+choices; it does not reconcile producer and purchaser prices, imports, margins,
+or taxes. Run `check_sut_balance(sut)` before selecting Model D or another
+SUT-to-IO transformation.
+
+### Download BEA tables once
+
+The BEA API requires a registered key. A caller selects the published Make and
+Use table identifiers explicitly, then caches both raw API responses and the
+corresponding long-form files:
+
+```julia
+release = BEARelease(reference_year, make_table_id, use_table_id)
+files = download_bea(release, "data/raw/bea"; api_key = ENV["BEA_API_KEY"])
+
+adapter = BEAAdapter(
+    files.make_path,
+    files.use_path;
+    products = commodity_codes,
+    activities = industry_codes,
+    final_uses = final_use_codes,
+    region = "US",
+    valuation = "selected BEA published valuation",
+    year = reference_year,
+)
+```
+
+The manifest records the table identifiers, year, response files, and checksums;
+it never records the API key.
+
+## BEA national accounts
+
+`BEANationalAccountsRelease` caches one caller-selected published BEA National
+Income and Product Accounts (NIPA) table. The output preserves the table name,
+line number, series code, description, metric, unit, unit multiplier, and
+value, so a later SAM workflow can make an explicit account mapping:
+
+```julia
+release = BEANationalAccountsRelease(2016, "T10105")
+files = download_bea_national_accounts(
+    release,
+    "data/raw/bea_national_accounts";
+    api_key = ENV["BEA_API_KEY"],
+    lines = ["1"],
+    metrics = ["Current Dollars"],
+)
+```
+
+The downloader records the selected published line and metric labels plus
+checksums, but never the API key. It does not choose NIPA tables or translate
+their lines into a SAM.
+
+### Download once, then work locally
+
+`load_sut` never accesses the network. Downloading from Eurostat is a separate,
+explicit setup action. Select the source year and the regional subsystem to
+cache:
+
+```julia
+release = FIGARORelease(2016)
+files = download_figaro(release, "data/raw/figaro"; regions = ["DE", "FR"])
+
+sut = load_sut(EurostatAdapter(files.supply_path, files.use_path; year = 2016))
+```
+
+The downloader uses Eurostat's official SDMX API. It refuses to overwrite an
+existing cache and writes a TOML manifest with the source dataflows, all query
+URLs, retrieval time, local file names, and SHA-256 checksums. A model chooses
+its own geographic scope; flows involving regions outside the selected set are
+not silently represented as domestic transactions.
 
 ## Transformation notes
 

@@ -1,8 +1,8 @@
 # Adapter Template (IO Bundle Mapping)
 
 This template documents the minimal raw tables that should be mapped into an
-`IOBundle`. The goal is to standardize source-specific adapters (Eurostat,
-GTAP, etc.) without imposing model-specific logic.
+`IOBundle`. The goal is to standardize source-specific adapters without
+imposing model-specific logic.
 
 ## Required tables
 
@@ -62,7 +62,23 @@ sam = sam_from_io(bundle)
 write_canonical_dataset("path/to/model/data", bundle)
 ```
 
-## Notes for GTAP / Eurostat
+## Eurostat FIGARO
+
+FIGARO is first loaded as a `MultiRegionSUT` through `EurostatAdapter`, not
+directly as an `IOBundle`. The flat reader retains source-level product origin,
+region, product, activity, and final-use labels. It only normalizes the source
+layout; it does not decide a target regional structure or an industry mapping.
+
+`symmetric_io_model_d` can transform normalized product rows into a sparse
+industry-by-industry `MultiRegionIOT` using a fixed product-sales structure.
+Before creating an `IOBundle`, the consuming model must still explicitly
+define:
+
+- its regional and industry aggregation;
+- its treatment of final-use and non-product accounts;
+- any additional factor, institutional, tax, and external accounts.
+
+## Notes for other sources
 
 - Map the source classifications into the target `goods`, `activities`,
   `factors`, and `institutions` lists before constructing matrices.
