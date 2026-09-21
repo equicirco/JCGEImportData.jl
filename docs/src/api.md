@@ -11,53 +11,52 @@ Order = [:module, :type, :function, :macro, :constant]
 ## BEA
 
 ```@docs
-JCGEImportData.BEAFlatSchema
-JCGEImportData.BEAAdapter
-JCGEImportData.BEARelease
-JCGEImportData.download_bea
-JCGEImportData.BEANationalAccountsRelease
-JCGEImportData.download_bea_national_accounts
+JCGEImportData.Adapters.BEAFlatSchema
+JCGEImportData.Adapters.BEAAdapter
+JCGEImportData.Adapters.BEARelease
+JCGEImportData.Adapters.download_bea
+JCGEImportData.Adapters.BEANationalAccountsRelease
+JCGEImportData.Adapters.download_bea_national_accounts
 ```
 
 ## Eurostat
 
 ```@docs
-JCGEImportData.EurostatAdapter
-JCGEImportData.EurostatNationalSUTRelease
-JCGEImportData.download_eurostat_national_sut
-JCGEImportData.EurostatNationalSUTAdapter
-JCGEImportData.EurostatNationalAccountsRelease
-JCGEImportData.download_eurostat_national_accounts
-JCGEImportData.SatelliteFlatSchema
-JCGEImportData.SatelliteAdapter
-JCGEImportData.EurostatSatelliteRelease
-JCGEImportData.download_eurostat_satellite
+JCGEImportData.Adapters.EurostatAdapter
+JCGEImportData.TableAdapters.EurostatNationalSUTRelease
+JCGEImportData.TableAdapters.download_eurostat_national_sut
+JCGEImportData.TableAdapters.EurostatNationalSUTAdapter
+JCGEImportData.TableAdapters.EurostatNationalAccountsRelease
+JCGEImportData.TableAdapters.download_eurostat_national_accounts
+JCGEImportData.TableAdapters.SatelliteFlatSchema
+JCGEImportData.TableAdapters.SatelliteAdapter
+JCGEImportData.TableAdapters.EurostatSatelliteRelease
+JCGEImportData.TableAdapters.download_eurostat_satellite
 ```
 
 ## FIGARO
 
 ```@docs
-JCGEImportData.FIGAROFlatSchema
-JCGEImportData.FIGARORelease
-JCGEImportData.download_figaro
+JCGEImportData.Adapters.FIGAROFlatSchema
+JCGEImportData.Adapters.FIGARORelease
+JCGEImportData.Adapters.download_figaro
 ```
 
 ## OECD ICIO
 
 ```@docs
-JCGEImportData.IOTFlatSchema
-JCGEImportData.IOTAdapter
-JCGEImportData.OECDICIOAdapter
-JCGEImportData.OECDICIORelease
-JCGEImportData.download_oecd_icio
-JCGEImportData.normalize_oecd_icio
+JCGEImportData.TableAdapters.IOTFlatSchema
+JCGEImportData.TableAdapters.IOTAdapter
+JCGEImportData.TableAdapters.OECDICIOAdapter
+JCGEImportData.TableAdapters.OECDICIORelease
+JCGEImportData.TableAdapters.download_oecd_icio
+JCGEImportData.TableAdapters.normalize_oecd_icio
 ```
 
 ## Local-table loaders
 
 ```@docs
-JCGEImportData.load_iobundle
-JCGEImportData.load_sut
-JCGEImportData.load_iot
-JCGEImportData.load_satellite
+JCGEImportData.Adapters.load_iobundle
+JCGEImportData.Adapters.load_sut
+JCGEImportData.TableAdapters.load_iot
 ```

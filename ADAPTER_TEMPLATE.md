@@ -62,17 +62,19 @@ sam = sam_from_io(bundle)
 write_canonical_dataset("path/to/model/data", bundle)
 ```
 
-## Eurostat FIGARO
+## Multi-regional source tables
 
-FIGARO is first loaded as a `MultiRegionSUT` through `EurostatAdapter`, not
-directly as an `IOBundle`. The flat reader retains source-level product origin,
-region, product, activity, and final-use labels. It only normalizes the source
-layout; it does not decide a target regional structure or an industry mapping.
+The same template applies to any multi-regional source, independently of its
+geography. A multi-regional SUT is first normalized as a `MultiRegionSUT`,
+retaining the source product origin, region, product, activity, and final-use
+labels. A multi-regional industry-by-industry IO source, such as OECD ICIO, is
+normalized as a `MultiRegionIOT` instead.
 
-`symmetric_io_model_d` can transform normalized product rows into a sparse
+For a SUT, `symmetric_io_model_d` can transform product rows into a sparse
 industry-by-industry `MultiRegionIOT` using a fixed product-sales structure.
-Before creating an `IOBundle`, the consuming model must still explicitly
-define:
+An IO source is already industry-by-industry and does not require that
+transformation. Before creating an `IOBundle`, the consuming model must still
+explicitly define:
 
 - its regional and industry aggregation;
 - its treatment of final-use and non-product accounts;
